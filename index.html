@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualisation de nos hits</title>
+
+    <link rel="stylesheet" href="css\style.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo"><span>M</span>usicData</div>
+        <ul class="nav-links">
+            <li><a href="index.html" class="active">Accueil</a></li>
+            <li><a href="geo.html">Géographie</a></li>
+            <li><a href="timeline.html">Évolution</a></li>
+            <li><a href="genres.html">Genres</a></li>
+            <li><a href="tech.html">Tech</a></li>
+            <li><a href="top.html">Top 50</a></li>
+            <li><a href="autres.html">Autres analyses</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+
+        <header class="hero-section">
+            <h1>Exploration des Hits Mondiaux (2000-2023)</h1>
+            <p>Une analyse data-driven de 20 ans de musique populaire.</p>
+        </header>
+
+        <section class="study-framework">
+
+            <div class="problem-statement">
+                <h2>Problématique</h2>
+                <p>
+                    Comment le profil commercial du 'Hit' français a-t-il évolué entre les années 2000
+                    et les années 2020 , et quels sont les indicateurs clés de
+                    succès qui ont persisté ?
+                </p>
+            </div>
+
+            <div class="hypothesis-grid">
+
+                <div class="hypo-card">
+                    <div class="hypo-header">
+                        <span class="page-tag">Page 1 : Géographie</span>
+                        <h3>D'où vient le son ?</h3>
+                    </div>
+                    <p class="question"><strong>Q :</strong> la légende Américaine est-elle toujours absolue ou
+                        assiste-t-on à une diversification des origines musicales ?</p>
+                    <p class="hypothesis"><strong>H :</strong> On observe une percée significative des artistes
+                        européens et sud-américains depuis 2015.</p>
+                </div>
+
+                <div class="hypo-card">
+                    <div class="hypo-header">
+                        <span class="page-tag">Page 2 : Évolution</span>
+                        <h3>Le Temps & L'Émotion</h3>
+                    </div>
+                    <p class="question"><strong>Q :</strong> La musique est-elle devenue plus rapide ou plus triste face
+                        aux crises mondiales ?</p>
+                    <p class="hypothesis"><strong>H :</strong> Le tempo augmente, mais la "Valence" (positivité) chute,
+                        reflétant une époque plus anxieuse.</p>
+                </div>
+
+                <div class="hypo-card">
+                    <div class="hypo-header">
+                        <span class="page-tag">Page 3 : Genres</span>
+                        <h3>La Guerre des Styles</h3>
+                    </div>
+                    <p class="question"><strong>Q :</strong> La Pop conserve-t-elle son trône face à l'émergence des
+                        musiques urbaines ?</p>
+                    <p class="hypothesis"><strong>H :</strong> La Pop décline au profit du Hip-Hop et de la Dance music
+                        qui saturent les charts.</p>
+                </div>
+
+                <div class="hypo-card">
+                    <div class="hypo-header">
+                        <span class="page-tag">Page 4 : Tech</span>
+                        <h3>La Recette du Hit</h3>
+                    </div>
+                    <p class="question"><strong>Q :</strong> Le format des chansons s'est-il adapté aux contraintes du
+                        streaming et de TikTok?</p>
+                    <p class="hypothesis"><strong>H :</strong> La durée moyenne des morceaux a chuté sous les 3 minutes
+                        pour maximiser le taux de replay.</p>
+                </div>
+
+                <div class="hypo-card">
+                    <div class="hypo-header">
+                        <span class="page-tag">Page 5: Autres analyses</span>
+                        <h3>Les autres facteurs à considérer </h3>
+                    </div>
+                    <p class="question"><strong>Q :</strong> Y'a t'il d'autres élément à prendre en compte ?</p>
+                    <p class="hypothesis"><strong>H :</strong> Les featuring sont il un facteurs pertinents pour
+                        produire un Hit ? Existe t-il d'autres métriques à prendre en compte ?</p>
+                </div>
+
+            </div>
+        </section>
+
+        <hr class="divider">
+
+        <div class="kpi-grid">
+            <div class="card kpi-card">
+                <h3>Total Chansons</h3>
+                <div class="kpi-value" id="total-songs">Chargement...</div>
+                <div class="kpi-sub">Analysées</div>
+            </div>
+            <div class="card kpi-card">
+                <h3>Artistes Uniques</h3>
+                <div class="kpi-value" id="total-artists">-</div>
+                <div class="kpi-sub">Dans la base</div>
+            </div>
+            <div class="card kpi-card">
+                <h3>Top Région</h3>
+                <div class="kpi-value highlight" id="top-region">-</div>
+                <div class="kpi-sub">La plus productive</div>
+            </div>
+            <div class="card kpi-card">
+                <h3>Durée Moyenne</h3>
+                <div class="kpi-value" id="avg-duration">-</div>
+                <div class="kpi-sub">Minutes</div>
+            </div>
+        </div>
+
+        <div class="charts-row">
+            <div class="card chart-card full-width">
+                <h3>Aperçu : Popularité Moyenne par Année</h3>
+                <div id="main-chart"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module" src="js/index.js"></script>
+
+</body>
+
+</html>

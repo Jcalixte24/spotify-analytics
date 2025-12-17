@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Géographie Musicale</title>
+
+    <link rel="stylesheet" href="css/style.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="logo">MusicData <span>Geo</span></div>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="geo.html" class="active">Géographie</a></li> <li><a href="timeline.html">Évolution</a></li>
+            <li><a href="genres.html">Genres</a></li>
+            <li><a href="tech.html">Tech</a></li>
+            <li><a href="top.html">Top 50</a></li>
+            <li><a href="autres.html">Autres</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+
+        <header class="hero-section">
+            <h1>D'où viennent les Hits ?</h1>
+            <p>Analyse de la répartition mondiale des succès musicaux.</p>
+        </header>
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <h3>Pays Représentés</h3>
+                <div class="kpi-value" id="nb-pays">-</div>
+                <div class="kpi-sub">Codes pays distincts</div>
+            </div>
+            <div class="kpi-card">
+                <h3>Pays N°1</h3>
+                <div class="kpi-value highlight" id="top-pays">-</div>
+                <div class="kpi-sub">Le plus gros producteur</div>
+            </div>
+            <div class="kpi-card">
+                <h3>Part du Top 1</h3>
+                <div class="kpi-value" id="part-top-pays">- %</div>
+                <div class="kpi-sub">Dominance du leader</div>
+            </div>
+        </div>
+
+        <div class="chart-card">
+            <h3>Top 10 des Pays Producteurs de Hits</h3>
+            <div id="geo-chart"></div>
+        </div>
+        
+    </div>
+
+    <script src="js/geo.js"></script>
+
+</body>
+</html>

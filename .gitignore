@@ -1,0 +1,4 @@
+dataset.csv
+__pycache__/
+.env
+# Ne pas ignorer dataset_final.json si vous voulez le partager

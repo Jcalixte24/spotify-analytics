@@ -1,28 +1,111 @@
-<div class="hypothesis-grid">
-    <div class="chart-card">
-        <div class="card-header">
-            <h3>1. Équilibre des Puissances Musicales</h3>
-            <span class="badge" id="interpret-geo">Analyse...</span>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse Géo - MusicData</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chart-container { position: relative; height: 350px; width: 100%; }
+        .badge-geo { background: rgba(29, 185, 84, 0.2); color: #1DB954; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
+        
+        .analysis-box {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid #1DB954;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+        }
+        .analysis-box h4 {
+            color: #1DB954;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .analysis-box p {
+            font-size: 0.9rem;
+            color: #b3b3b3;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><span>M</span>usicData</div>
+        <ul class="nav-links">
+            <li><a href="index.html">Accueil</a></li>
+            <li><a href="geo.html" class="active">Géographie</a></li>
+            <li><a href="timeline.html">Évolution</a></li>
+            <li><a href="genres.html">Genres</a></li>
+            <li><a href="top.html">Top 50</a></li>
+            
+        </ul>
+    </nav>
+
+    <div class="container">
+        <header class="hero-section">
+            <h1>Analyse Géographique</h1>
+            <p>Répartition mondiale et performance commerciale par zone géographique.</p>
+        </header>
+
+        <div class="kpi-grid">
+            <div class="card kpi-card">
+                <h3>Marchés</h3>
+                <div class="kpi-value" id="nb-pays">-</div>
+                <div class="kpi-sub">Pays représentés</div>
+            </div>
+            <div class="card kpi-card">
+                <h3>Top Producteur</h3>
+                <div class="kpi-value highlight" id="top-pays">-</div>
+                <div class="kpi-sub">Volume de hits</div>
+            </div>
+            
+            
         </div>
-        <canvas id="chartRegions"></canvas>
-        <p class="hypothesis"><strong>Analyse :</strong> Cette vue permet de vérifier si le marché est encore polarisé par l'Occident ou si l'Asie et l'Amérique Latine gagnent du terrain.</p>
+
+        <div class="charts-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 25px;">
+            
+            <div class="card chart-card">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <h3>Volume de Production</h3>
+                    <span class="badge-geo">Quantité</span>
+                </div>
+                <div class="chart-container"><canvas id="chartRegions"></canvas></div>
+                <div class="analysis-box">
+                    <h4>Interprétation</h4>
+                    <p>Ce graphique montre la capacité de production brute. On identifie ici les hubs historiques qui alimentent le catalogue mondial.</p>
+                </div>
+            </div>
+
+            <div class="card chart-card">
+                <div style="display: flex; justify-content: space-between; align-items: start;">
+                    <h3>Impact Commercial Moyen</h3>
+                    <span class="badge-geo">Qualité / Score</span>
+                </div>
+                <div class="chart-container"><canvas id="chartPopularityByRegion"></canvas></div>
+                <div class="analysis-box">
+                    <h4>Interprétation</h4>
+                    <p>Le rayon indique la popularité moyenne. Une zone "large" signifie que ses titres sont, en moyenne, plus populaires au niveau mondial que ses concurrents.</p>
+                </div>
+            </div>
+
+            <div class="card chart-card" style="grid-column: 1 / -1;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+                    <h3>Indice de Spécialisation : Part Mondiale des Genres</h3>
+                    <span class="badge-geo">% du Volume Mondial</span>
+                </div>
+                
+                <div style="height: 400px;"><canvas id="chartGenresGrouped"></canvas></div>
+                <div class="analysis-box">
+                    <h4>Interprétation</h4>
+                    <p>Ce graphique mesure la <strong>concentration mondiale</strong>. Si une barre atteint 40%, cela signifie que la région produit 40% de tous les hits existants de ce genre dans le monde.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="chart-card">
-        <div class="card-header">
-            <h3>2. "L'ambiance" par Région (Énergie)</h3>
-            <span class="badge">Niveau sonore</span>
-        </div>
-        <canvas id="chartEnergy"></canvas>
-        <p class="hypothesis"><strong>Analyse :</strong> Un score élevé indique des régions produisant des titres "up-tempo" (Dance, Pop), tandis qu'un score bas révèle des régions plus mélancoliques ou acoustiques.</p>
-    </div>
-
-    <div class="chart-card full-width">
-        <div class="card-header">
-            <h3>3. Spécialisation Culturelle par Zone</h3>
-            <span class="badge">Top 3 Genres</span>
-        </div>
-        <canvas id="chartGenresCompare"></canvas>
-        <p class="hypothesis"><strong>Analyse :</strong> Ce graphique montre l'identité propre de chaque région. Est-ce que le monde entier écoute la même chose ou chaque région garde-t-elle ses racines ?</p>
-    </div>
-</div>
+    <script src="js/geo.js"></script>
+</body>
+</html>

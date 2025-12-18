@@ -1,34 +1,113 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualisation de nos hits</title>
+    <title>Top 50 - MusicData</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .filter-container { display: flex; gap: 20px; margin-bottom: 30px; background: #121212; padding: 25px; border-radius: 15px; border: 1px solid #282828; }
+        .filter-group { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .filter-group label { color: #1db954; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+        select { background: #282828; color: white; border: 1px solid #333; padding: 12px; border-radius: 8px; outline: none; cursor: pointer; }
 
-    <link rel="stylesheet" href="css\style.css">
+        /* Grille des cartes */
+        .top-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+        .track-card {
+            background: #181818;
+            padding: 15px;
+            border-radius: 10px;
+            transition: transform 0.3s, background 0.3s;
+            border: 1px solid transparent;
+        }
 
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+        .track-card:hover {
+            background: #282828;
+            transform: translateY(-5px);
+            border-color: #1db954;
+        }
+
+        .track-cover {
+            width: 100%;
+            aspect-ratio: 1/1;
+            border-radius: 6px;
+            object-fit: cover;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+
+        .track-info h4 {
+            color: #fff;
+            font-size: 0.95rem;
+            margin: 0 0 5px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .track-info p {
+            color: #b3b3b3;
+            font-size: 0.8rem;
+            margin: 0;
+        }
+
+        .track-popularity {
+            display: inline-block;
+            margin-top: 10px;
+            color: #1db954;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border: 1px solid #1db954;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px;
+            color: #555;
+        }
+    </style>
 </head>
-
 <body>
-
     <nav class="navbar">
         <div class="logo"><span>M</span>usicData</div>
         <ul class="nav-links">
-            <li><a href="index.html" >Accueil</a></li>
+            <li><a href="index.html">Accueil</a></li>
             <li><a href="geo.html">Géographie</a></li>
             <li><a href="timeline.html">Évolution</a></li>
             <li><a href="genres.html">Genres</a></li>
-            <li><a href="tech.html">Tech</a></li>
             <li><a href="top.html" class="active">Top 50</a></li>
-            <li><a href="autres.html">Autres analyses</a></li>
         </ul>
     </nav>
-    
-    
+
+    <div class="container">
+        <header class="hero-section">
+            <h1>Le Top 50</h1>
+            <p>Classement des titres les plus populaires selon vos critères (1980-2022).</p>
+        </header>
+
+        <div class="filter-container">
+            <div class="filter-group">
+                <label>Zone Géographique</label>
+                <select id="regionSelect"><option value="all">Monde entier</option></select>
+            </div>
+            <div class="filter-group">
+                <label>Année</label>
+                <select id="yearSelect"><option value="all">Toutes les années</option></select>
+            </div>
+        </div>
+
+        <div id="topList" class="top-grid">
+            </div>
+    </div>
+
+    <script src="js/top.js"></script>
 </body>
+</html>

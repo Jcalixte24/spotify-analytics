@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         calculerKPIs(data);
         initInteractiveGenreRace(data);
         afficherDuelADN(data);
+        afficherTrajectoirePopularite(data);
 
     } catch (error) {
         console.error("Erreur de chargement :", error);
@@ -37,7 +38,7 @@ function calculerKPIs(data) {
     document.getElementById('avg-duration').innerText = `${Math.floor(moy/60)}:${Math.round(moy%60).toString().padStart(2,'0')}`;
 }
 
-// --- COURSE DYNAMIQUE (1980-2022) ---
+// --- COURSE DYNAMIQUE  ---
 async function initInteractiveGenreRace(data) {
     const slider = document.getElementById('yearRange');
     const yearText = document.getElementById('yearValue');
@@ -48,7 +49,7 @@ async function initInteractiveGenreRace(data) {
     let playInterval;
 
     const statsByYear = {};
-    for (let yr = 1980; yr <= 2022; yr++) {
+    for (let yr = 1980; yr <= 2023; yr++) {
         const yearHits = data.filter(d => parseInt(d.year) === yr);
         const genreSums = {};
         const genreCounts = {};
@@ -60,6 +61,7 @@ async function initInteractiveGenreRace(data) {
             }
         });
 
+        
         statsByYear[yr] = Object.keys(genreSums)
             .map(genre => ({
                 x: genre,
@@ -73,9 +75,9 @@ async function initInteractiveGenreRace(data) {
         series: [{ name: 'Popularité Moyenne', data: statsByYear[1980] }],
         chart: { type: 'bar', height: 400, animations: { enabled: true, speed: 600 }, toolbar: { show: false } },
         plotOptions: { bar: { horizontal: true, distributed: true, borderRadius: 6 } },
-        colors: ['#1db954', '#1ed760', '#1aa34a', '#21d366', '#12b8ff', '#535353', '#b3b3b3'],
+        colors: ['#1db954', '#1ed760', '#1aa34a', '#21d366', '#12b8ff', '#535353', '#271313ff'],
         xaxis: { max: 100, labels: { style: { colors: '#888' } } },
-        yaxis: { labels: { style: { colors: '#fff', fontSize: '13px' }, width: 140 } },
+        yaxis: { labels: { style: { colors: '#180505ff', fontSize: '13px' }, width: 140 } },
         legend: { show: false },
         theme: { mode: 'dark' }
     };
@@ -103,32 +105,9 @@ async function initInteractiveGenreRace(data) {
             isPlaying = true; playBtn.innerText = "⏸";
             playInterval = setInterval(() => {
                 let nxt = parseInt(slider.value) + 1;
-                if (nxt > 2022) { stopAutoPlay(); return; }
+                if (nxt > 2023) { stopAutoPlay(); return; }
                 slider.value = nxt; updateYear(nxt);
             }, 1200);
         }
     });
-}
-
-function afficherDuelADN(data) {
-    const getAvg = (arr, key, factor = 100) => 
-        (arr.reduce((a, b) => a + (b[key] || 0), 0) / (arr.length || 1) * factor);
-
-    const debut80s = data.filter(d => parseInt(d.year) === 1980);
-    const actuel2022 = data.filter(d => parseInt(d.year) === 2022);
-    const metrics = ['danceability', 'energy', 'popularity'];
-    
-    new ApexCharts(document.querySelector("#comparison-bar-chart"), {
-        series: [
-            { name: 'Année 1980', data: metrics.map(m => getAvg(debut80s, m, m === 'popularity' ? 1 : 100).toFixed(1)) },
-            { name: 'Année 2022', data: metrics.map(m => getAvg(actuel2022, m, m === 'popularity' ? 1 : 100).toFixed(1)) }
-        ],
-        chart: { type: 'bar', height: 350, toolbar: { show: false } },
-        colors: ['#444', '#1db954'],
-        plotOptions: { bar: { columnWidth: '45%', borderRadius: 4 } },
-        xaxis: { categories: ['Dansabilité', 'Énergie', 'Popularité'], labels: { style: { colors: '#888' } } },
-        yaxis: { max: 100, labels: { style: { colors: '#888' } } },
-        theme: { mode: 'dark' },
-        legend: { position: 'top' }
-    }).render();
 }

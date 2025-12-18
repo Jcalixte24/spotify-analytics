@@ -1,34 +1,74 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualisation de nos hits</title>
-
-    <link rel="stylesheet" href="css\style.css">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-
+    <title>Évolution - MusicData</title>
+    <link rel="stylesheet" href="css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <style>
+        .analysis-card { 
+            background: rgba(255, 255, 255, 0.03); 
+            border-left: 4px solid #1db954; 
+            padding: 20px; 
+            margin-top: 20px; 
+        }
+        .analysis-card h4 { color: #1db954; font-size: 0.8rem; letter-spacing: 1.5px; margin-bottom: 10px; text-transform: uppercase; }
+        .analysis-card p { color: #b3b3b3; font-size: 0.95rem; line-height: 1.6; }
+        .chart-card { position: relative; }
+    </style>
 </head>
-
 <body>
-
     <nav class="navbar">
         <div class="logo"><span>M</span>usicData</div>
         <ul class="nav-links">
-            <li><a href="index.html" class="active">Accueil</a></li>
+            <li><a href="index.html">Accueil</a></li>
             <li><a href="geo.html">Géographie</a></li>
-            <li><a href="timeline.html">Évolution</a></li>
+            <li><a href="timeline.html" class="active">Évolution</a></li>
             <li><a href="genres.html">Genres</a></li>
-            <li><a href="tech.html">Tech</a></li>
             <li><a href="top.html">Top 50</a></li>
-            <li><a href="autres.html">Autres analyses</a></li>
+            
         </ul>
     </nav>
-    
-    
+
+    <div class="container">
+        <header class="hero-section">
+            <h1>Trajectoire Acoustique</h1>
+            <p>Analyse de la mutation du Hit : 1980 - 2022</p>
+        </header>
+
+        <div class="card chart-card full-width" style="margin-bottom: 30px;">
+            <h3>1. Mutation de l'Humeur (Énergie vs Vibe)</h3>
+            <div id="chartEvolutionMain"></div>
+            <div class="analysis-box">
+                <div class="analysis-card">
+                    <h4>Interprétation</h4>
+                    <p>La musique moderne s'est "standardisée" : l'énergie et la dansabilité ne divergent plus, elles fusionnent pour créer des titres optimisés pour le streaming.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-row" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 30px;">
+            <div class="card chart-card">
+                <h3>2. Rythmique (BPM Moyen)</h3>
+                <div id="chartTempoStep"></div>
+                <div class="analysis-card">
+                    <h4>Analyse</h4>
+                    <p>Le tempo a franchi un palier après 2010, passant de 115 à 125 BPM sous l'influence de la Trap.</p>
+                </div>
+            </div>
+
+            <div class="card chart-card">
+                <h3>3. Le Format qui Rétrécit (Durée)</h3>
+                <div id="chartDurationArea"></div>
+                <div class="analysis-card">
+                    <h4>Analyse</h4>
+                    <p>Nous avons perdu environ 1 minute par titre. On produit plus court pour maximiser le taux de replay.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/timeline.js"></script>
 </body>
+</html>

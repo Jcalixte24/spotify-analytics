@@ -4,11 +4,21 @@ import base64
 import time
 import math
 import os
+import kagglehub
+
+# Partie Lyes Extract
+def extract_dataset():
+    path = kagglehub.dataset_download("maharshipandya/-spotify-tracks-dataset")
+    files = os.listdir(path)
+    for f in files:
+        if f.endswith(".csv"):
+            return pd.read_csv(os.path.join(path, f))
+# Partie Lyes Extract
+
 
 # --- CONFIGURATION ---
-CLIENT_ID = '511c7c4a941a444faf7aadf9abc5e16e'
-CLIENT_SECRET = '77d6b98171604dd287831c97fa6f455b'
-INPUT_FILE = 'dataset.csv'
+CLIENT_ID = os.getenv("SPOTIFY_CLIENT_ID")
+CLIENT_SECRET = os.getenv("SPOTIFY_CLIENT_SECRET")
 OUTPUT_FILE = 'dataset_final.json'
 
 # --- CARTOGRAPHIE DES RÉGIONS (Pour regrouper les pays) ---
@@ -21,10 +31,10 @@ def get_region_from_code(code):
     # Amérique du Nord
     if code in ['US', 'CA', 'MX']: return "Amérique du Nord"
     
-    # Europe (Principaux marchés musicaux)
+    # Europe 
     if code in ['GB', 'FR', 'DE', 'SE', 'IT', 'ES', 'NL', 'NO', 'DK', 'IE', 'BE', 'CH']: return "Europe"
     
-    # Asie (K-Pop, J-Pop...)
+    # Asie 
     if code in ['KR', 'JP', 'CN', 'IN', 'TW']: return "Asie"
     
     # Amérique Latine
@@ -116,11 +126,7 @@ def format_duration(ms):
 
 def main():
     print("Lecture du fichier CSV...")
-    if not os.path.exists(INPUT_FILE):
-        print(f" Fichier {INPUT_FILE} introuvable.")
-        return
-
-    df = pd.read_csv(INPUT_FILE)
+    df = extract_dataset()
     
     # On garde les Hits (>30 popularité) pour avoir des stats pertinentes
     df_hits = df[df['popularity'] >= 30].copy()

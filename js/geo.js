@@ -2,143 +2,115 @@ document.addEventListener('DOMContentLoaded', async () => {
     const response = await fetch('dataset_final.json');
     const data = await response.json();
 
-    // --- 1. PRÉPARATION DES DONNÉES ---
-    const regions = {};
-    const countries = {};
+    // --- 1. EXTRACTION DE DONNÉES AVANCÉE ---
     const statsByRegion = {};
-    const genreStatsByRegion = {};
+    const countries = {};
 
     data.forEach(item => {
-        const r = item.region || "Autre";
-        const genre = item.track_genre || "Autres";
-        
-        regions[r] = (regions[r] || 0) + 1;
-        countries[item.country_code] = (countries[item.country_code] || 0) + 1;
+        const r = item.region || "Inconnu";
+        if (r.toLowerCase() === "inconnu") return; // On ignore les données sales
 
-        if(!statsByRegion[r]) {
-            statsByRegion[r] = { pop: 0, energy: 0, dance: 0, count: 0 };
-            genreStatsByRegion[r] = {};
+        if (!statsByRegion[r]) {
+            statsByRegion[r] = { count: 0, energy: 0, genres: {} };
         }
-        statsByRegion[r].pop += item.popularity || 0;
-        statsByRegion[r].energy += item.energy || 0;
-        statsByRegion[r].dance += item.danceability || 0;
         statsByRegion[r].count++;
-
-        genreStatsByRegion[r][genre] = (genreStatsByRegion[r][genre] || 0) + 1;
+        statsByRegion[r].energy += item.energy || 0;
+        
+        const g = item.track_genre || "Autres";
+        statsByRegion[r].genres[g] = (statsByRegion[r].genres[g] || 0) + 1;
+        
+        countries[item.country_code] = (countries[item.country_code] || 0) + 1;
     });
 
     const regionNames = Object.keys(statsByRegion);
-    const colors = ['#1DB954', '#1ed760', '#ffffff', '#535353', '#b3b3b3'];
 
-    // --- 2. MISE À JOUR DES KPI ---
-    const sortedCountries = Object.entries(countries).sort((a,b) => b[1] - a[1]);
-    document.getElementById('nb-pays').innerText = Object.keys(countries).length;
-    document.getElementById('top-pays').innerText = sortedCountries[0][0];
-    document.getElementById('part-top-pays').innerText = ((sortedCountries[0][1] / data.length) * 100).toFixed(1) + "%";
+    // --- 2. INTERPRÉTATION AUTOMATIQUE ---
+    const sortedByCount = [...regionNames].sort((a,b) => statsByRegion[b].count - statsByRegion[a].count);
+    const leader = sortedByCount[0];
+    const challenger = sortedByCount[1];
+    document.getElementById('interpret-geo').innerText = `${leader} domine, suivi de ${challenger}`;
 
-    // --- 3. GÉNÉRATION DES 6 GRAPHIQUES ---
+    // --- 3. CONFIGURATION DES COULEURS (Palette cohérente) ---
+    const spotifyColors = {
+        green: '#1DB954',
+        dark: '#191414',
+        lightGreen: '#1ed760',
+        white: '#ffffff',
+        gray: '#b3b3b3'
+    };
 
-    // G1: RÉPARTITION RÉGIONS (Doughnut)
+    // --- G1: RÉPARTITION (Doughnut) ---
     new Chart(document.getElementById('chartRegions'), {
         type: 'doughnut',
         data: {
-            labels: Object.keys(regions),
-            datasets: [{ data: Object.values(regions), backgroundColor: colors }]
+            labels: regionNames,
+            datasets: [{
+                data: regionNames.map(r => statsByRegion[r].count),
+                backgroundColor: [spotifyColors.green, '#535353', '#ffffff', '#1ed760', '#b3b3b3'],
+                hoverOffset: 15
+            }]
         },
-        options: { plugins: { legend: { position: 'bottom', labels: { color: '#b3b3b3' } } } }
-    });
-
-    // G2: TOP 10 PAYS (Horizontal Bar)
-    const top10C = sortedCountries.slice(0, 10);
-    new Chart(document.getElementById('chartTopCountries'), {
-        type: 'bar',
-        data: {
-            labels: top10C.map(c => c[0]),
-            datasets: [{ label: 'Titres', data: top10C.map(c => c[1]), backgroundColor: '#1DB954' }]
-        },
-        options: { indexAxis: 'y', plugins: { legend: { display: false } } }
-    });
-
-    // G3: POPULARITÉ (Line)
-    const sortedPop = regionNames
-        .map(r => ({ name: r, val: (statsByRegion[r].pop / statsByRegion[r].count).toFixed(1) }))
-        .sort((a, b) => b.val - a.val);
-
-    new Chart(document.getElementById('chartPopularity'), {
-        type: 'line',
-        data: {
-            labels: sortedPop.map(d => d.name),
-            datasets: [{ label: 'Popularité Moyenne', data: sortedPop.map(d => d.val), borderColor: '#1ed760', tension: 0.3, fill: false }]
+        options: { 
+            cutout: '70%',
+            plugins: { legend: { position: 'right', labels: { color: '#b3b3b3', font: { family: 'Inter' } } } }
         }
     });
 
-    // G4: ÉNERGIE (Vertical Bar)
-    const sortedEnergy = regionNames
-        .map(r => ({ name: r, val: (statsByRegion[r].energy / statsByRegion[r].count).toFixed(2) }))
-        .sort((a, b) => b.val - a.val);
+    // --- G2: ÉNERGIE (Barres Horizontales pour meilleure lecture) ---
+    const energyData = regionNames.map(r => ({
+        name: r,
+        val: (statsByRegion[r].energy / statsByRegion[r].count).toFixed(2)
+    })).sort((a,b) => b.val - a.val);
 
     new Chart(document.getElementById('chartEnergy'), {
         type: 'bar',
         data: {
-            labels: sortedEnergy.map(d => d.name),
-            datasets: [{ label: 'Énergie', data: sortedEnergy.map(d => d.val), backgroundColor: '#1DB954' }]
+            labels: energyData.map(d => d.name),
+            datasets: [{
+                label: 'Score Énergie (0-1)',
+                data: energyData.map(d => d.val),
+                backgroundColor: spotifyColors.lightGreen,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            indexAxis: 'y', // Plus lisible pour comparer des noms de régions
+            scales: { x: { grid: { display: false }, ticks: { color: '#888' } }, y: { ticks: { color: '#fff' } } }
         }
     });
 
-    // G5: TOP 3 GENRES PAR RÉGION (Stacked Bar)
-    const mainRegions = Object.entries(regions).sort((a,b) => b[1]-a[1]).slice(0, 5).map(r => r[0]);
-    const top1Data = [], top2Data = [], top3Data = [];
-    const top1Labs = [], top2Labs = [], top3Labs = [];
+    // --- G3: TOP GENRES (Stacked Bar avec noms de genres) ---
+    // On prend les 5 régions les plus importantes
+    const top5Regions = sortedByCount.slice(0, 5);
+    const datasets = [
+        { label: 'Genre Dominant', data: [], backgroundColor: spotifyColors.green, names: [] },
+        { label: 'Second Genre', data: [], backgroundColor: spotifyColors.gray, names: [] },
+        { label: 'Troisième Genre', data: [], backgroundColor: '#535353', names: [] }
+    ];
 
-    mainRegions.forEach(r => {
-        const sortedGenres = Object.entries(genreStatsByRegion[r]).sort((a,b) => b[1]-a[1]);
-        top1Data.push(sortedGenres[0] ? sortedGenres[0][1] : 0);
-        top1Labs.push(sortedGenres[0] ? sortedGenres[0][0] : '');
-        top2Data.push(sortedGenres[1] ? sortedGenres[1][1] : 0);
-        top2Labs.push(sortedGenres[1] ? sortedGenres[1][0] : '');
-        top3Data.push(sortedGenres[2] ? sortedGenres[2][1] : 0);
-        top3Labs.push(sortedGenres[2] ? sortedGenres[2][0] : '');
+    top5Regions.forEach(r => {
+        const sortedGenres = Object.entries(statsByRegion[r].genres).sort((a,b) => b[1] - a[1]);
+        for(let i=0; i<3; i++) {
+            datasets[i].data.push(sortedGenres[i] ? sortedGenres[i][1] : 0);
+            datasets[i].names.push(sortedGenres[i] ? sortedGenres[i][0] : 'N/A');
+        }
     });
 
     new Chart(document.getElementById('chartGenresCompare'), {
         type: 'bar',
-        data: {
-            labels: mainRegions,
-            datasets: [
-                { label: 'Top 1', data: top1Data, backgroundColor: '#1DB954', genres: top1Labs },
-                { label: 'Top 2', data: top2Data, backgroundColor: '#1ed760', genres: top2Labs },
-                { label: 'Top 3', data: top3Data, backgroundColor: '#ffffff', genres: top3Labs }
-            ]
-        },
+        data: { labels: top5Regions, datasets: datasets },
         options: {
-            scales: { x: { stacked: true }, y: { stacked: true } },
+            scales: { x: { stacked: true }, y: { stacked: true, grid: { color: '#222' } } },
             plugins: {
                 tooltip: {
                     callbacks: {
-                        label: (ctx) => `${ctx.dataset.genres[ctx.dataIndex].toUpperCase()} : ${ctx.raw} titres`
+                        label: (ctx) => {
+                            let genreName = ctx.dataset.names[ctx.dataIndex];
+                            return ` ${genreName.toUpperCase()} : ${ctx.raw} titres`;
+                        }
                     }
                 }
             }
         }
-    });
-
-    // G6: DANCEABILITÉ (Radar)
-    const sortedDance = regionNames
-        .map(r => ({ name: r, val: (statsByRegion[r].dance / statsByRegion[r].count).toFixed(2) }))
-        .sort((a, b) => b.val - a.val);
-
-    new Chart(document.getElementById('chartDanceability'), {
-        type: 'radar',
-        data: {
-            labels: sortedDance.map(d => d.name),
-            datasets: [{
-                label: 'Indice de Danse',
-                data: sortedDance.map(d => d.val),
-                backgroundColor: 'rgba(29, 185, 84, 0.2)',
-                borderColor: '#1DB954',
-                pointBackgroundColor: '#1DB954'
-            }]
-        },
-        options: { scales: { r: { min: 0, max: 1, grid: { color: '#333' } } } }
     });
 });

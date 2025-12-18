@@ -155,7 +155,7 @@ def main():
         if i % 10 == 0: print(f" Lot {i + 1}/{total_batches}...")
         time.sleep(0.5) # Pause API
 
-    print(" Enrichissement terminé. Fusion...")
+    print(" Transformation terminé. Fusion...")
 
     def apply_enrichment(row):
         tid = row['track_id']

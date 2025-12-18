@@ -1,85 +1,28 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analyse Géo - Spotify Analytics</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="logo">MusicData <span>Geo</span></div>
-        <ul class="nav-links">
-            <li><a href="index.html">Accueil</a></li>
-            <li><a href="geo.html" class="active">Géographie</a></li>
-            <li><a href="timeline.html">Évolution</a></li>
-            <li><a href="genres.html">Genres</a></li>
-            <li><a href="tech.html">Tech</a></li>
-            <li><a href="top.html">Top 50</a></li>
-        </ul>
-    </nav>
-
-    <div class="container">
-        <header class="hero-section">
-            <h1>Analyse Géographique des Tendances</h1>
-            <p>Exploration des données mondiales : répartition, popularité et genres dominants.</p>
-        </header>
-
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <h3>Pays Représentés</h3>
-                <div class="kpi-value" id="nb-pays">-</div>
-            </div>
-            <div class="kpi-card">
-                <h3>Premier Producteur</h3>
-                <div class="kpi-value highlight" id="top-pays">-</div>
-            </div>
-            <div class="kpi-card">
-                <h3>Part du Leader</h3>
-                <div class="kpi-value" id="part-top-pays">- %</div>
-            </div>
+<div class="hypothesis-grid">
+    <div class="chart-card">
+        <div class="card-header">
+            <h3>1. Équilibre des Puissances Musicales</h3>
+            <span class="badge" id="interpret-geo">Analyse...</span>
         </div>
-
-        <div class="hypothesis-grid">
-            <div class="chart-card">
-                <h3>1. Répartition par Région</h3>
-                <canvas id="chartRegions"></canvas>
-                <p class="hypothesis">Volume global de titres par grande zone géographique.</p>
-            </div>
-
-            <div class="chart-card">
-                <h3>2. Top 10 Pays (Volume)</h3>
-                <canvas id="chartTopCountries"></canvas>
-                <p class="hypothesis">Classement des pays exportant le plus de succès musicaux.</p>
-            </div>
-
-            <div class="chart-card">
-                <h3>3. Courbe de Popularité</h3>
-                <canvas id="chartPopularity"></canvas>
-                <p class="hypothesis">Évolution du score de popularité moyen selon les régions.</p>
-            </div>
-
-            <div class="chart-card">
-                <h3>4. Niveau d'Énergie Moyen</h3>
-                <canvas id="chartEnergy"></canvas>
-                <p class="hypothesis">Mesure de l'intensité sonore produite par région.</p>
-            </div>
-
-            <div class="chart-card">
-                <h3>5. Top 3 Genres par Région</h3>
-                <canvas id="chartGenresCompare"></canvas>
-                <p class="hypothesis">Classement des trois genres les plus fréquents par zone.</p>
-            </div>
-
-            <div class="chart-card">
-                <h3>6. Profil de Danceabilité</h3>
-                <canvas id="chartDanceability"></canvas>
-                <p class="hypothesis">Capacité rythmique des morceaux à inciter à la danse.</p>
-            </div>
-        </div>
+        <canvas id="chartRegions"></canvas>
+        <p class="hypothesis"><strong>Analyse :</strong> Cette vue permet de vérifier si le marché est encore polarisé par l'Occident ou si l'Asie et l'Amérique Latine gagnent du terrain.</p>
     </div>
 
-    <script src="js/geo.js"></script>
-</body>
-</html>
+    <div class="chart-card">
+        <div class="card-header">
+            <h3>2. "L'ambiance" par Région (Énergie)</h3>
+            <span class="badge">Niveau sonore</span>
+        </div>
+        <canvas id="chartEnergy"></canvas>
+        <p class="hypothesis"><strong>Analyse :</strong> Un score élevé indique des régions produisant des titres "up-tempo" (Dance, Pop), tandis qu'un score bas révèle des régions plus mélancoliques ou acoustiques.</p>
+    </div>
+
+    <div class="chart-card full-width">
+        <div class="card-header">
+            <h3>3. Spécialisation Culturelle par Zone</h3>
+            <span class="badge">Top 3 Genres</span>
+        </div>
+        <canvas id="chartGenresCompare"></canvas>
+        <p class="hypothesis"><strong>Analyse :</strong> Ce graphique montre l'identité propre de chaque région. Est-ce que le monde entier écoute la même chose ou chaque région garde-t-elle ses racines ?</p>
+    </div>
+</div>

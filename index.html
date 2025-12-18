@@ -6,13 +6,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualisation de nos hits</title>
 
-    <link rel="stylesheet" href="css\style.css">
+    <link rel="stylesheet" href="css/style.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <style>
+        .year-display {
+            font-size: 8rem;
+            font-weight: 800;
+            color: rgba(29, 185, 84, 0.08);
+            position: absolute;
+            right: 40px;
+            bottom: 20px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .chart-container-rel { position: relative; overflow: hidden; }
+
+        .timeline-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 25px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #yearRange { width: 200px; cursor: pointer; accent-color: #1db954; }
+
+        #playBtn {
+            background: #1db954;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .chart-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            z-index: 1;
+            position: relative;
+        }
+    </style>
 </head>
 
 <body>
@@ -33,8 +83,8 @@
     <div class="container">
 
         <header class="hero-section">
-            <h1>Exploration des Hits Mondiaux (2000-2023)</h1>
-            <p>Une analyse data-driven de 20 ans de musique populaire.</p>
+            <h1>Exploration des Hits Mondiaux (1980-2022)</h1>
+            <p>Une analyse data-driven de plus de 40 ans de musique populaire.</p>
         </header>
 
         <section class="study-framework">
@@ -42,8 +92,8 @@
             <div class="problem-statement">
                 <h2>Problématique</h2>
                 <p>
-                    Comment le profil commercial du 'Hit' a-t-il évolué entre les années 2000
-                    et les années 2020 , et quels sont les indicateurs clés de
+                    Comment le profil commercial du 'Hit' a-t-il évolué entre les années 1980
+                    et  2022 , et quels sont les indicateurs clés de
                     succès qui ont persisté ?
                 </p>
             </div>
@@ -109,10 +159,10 @@
 
         <hr class="divider">
 
-        <div class="kpi-grid">
+        <div class="kpi-grid" style="margin-bottom: 40px;">
             <div class="card kpi-card">
                 <h3>Total Chansons</h3>
-                <div class="kpi-value" id="total-songs">Chargement...</div>
+                <div class="kpi-value" id="total-songs">...</div>
                 <div class="kpi-sub">Analysées</div>
             </div>
             <div class="card kpi-card">
@@ -123,7 +173,7 @@
             <div class="card kpi-card">
                 <h3>Top Région</h3>
                 <div class="kpi-value highlight" id="top-region">-</div>
-                <div class="kpi-sub">La plus productive</div>
+                <div class="kpi-sub">Dominante</div>
             </div>
             <div class="card kpi-card">
                 <h3>Durée Moyenne</h3>
@@ -132,10 +182,27 @@
             </div>
         </div>
 
+        <div class="card chart-card full-width chart-container-rel" style="margin-bottom: 30px;">
+            <div class="chart-header-flex">
+                <div>
+                    <h3>Top 10 Genres par Popularité Moyenne</h3>
+                    <p class="kpi-sub">L'impact commercial réel de chaque style musical</p>
+                </div>
+                <div class="timeline-controls">
+                    <button id="playBtn">▶</button>
+                    <label for="yearRange">Année : <span id="yearValue" style="color: #1db954;">1980</span></label>
+                    <input type="range" id="yearRange" min="1980" max="2022" value="1980">
+                </div>
+            </div>
+            <div id="genre-race-chart"></div>
+            <div id="current-year-bg" class="year-display">1980</div>
+        </div>
+
         <div class="charts-row">
             <div class="card chart-card full-width">
-                <h3>Aperçu : Popularité Moyenne par Année</h3>
-                <div id="main-chart"></div>
+                <h3>Le Duel des Générations : 1980 vs 2022</h3>
+                <p class="kpi-sub" style="margin-bottom: 15px;">Évolution de l'ADN musical (Index 0-100)</p>
+                <div id="comparison-bar-chart"></div>
             </div>
         </div>
 

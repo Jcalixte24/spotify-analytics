@@ -1,146 +1,134 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const response = await fetch('dataset_final.json');
+        const data = await response.json();
 
-    // --- 1. CHARGEMENT DU FICHIER JSON ---
-    const response = await fetch('dataset_final.json'); 
-    // On transforme la réponse en données utilisables 
-    const musicData = await response.json();
+        calculerKPIs(data);
+        initInteractiveGenreRace(data);
+        afficherDuelADN(data);
 
-    // --- 2. LANCEMENT DES ANALYSES ---
-    calculerKPIs(musicData);
-    afficherGraphique(musicData);
-
+    } catch (error) {
+        console.error("Erreur de chargement :", error);
+    }
 });
 
-// --- PARTIE KPI (Chiffres clés) ---
+// --- KPIs ---
 function calculerKPIs(data) {
-    // 1. Total Chansons
     document.getElementById('total-songs').innerText = data.length.toLocaleString();
-
-    // --- 2. Artistes Uniques ---
-    const sacArtistes = new Set(); // "Set" supprime automatiquement les doublons
-
+    const sacArtistes = new Set();
     data.forEach(item => {
         if (item.artists) {
-            // On sépare les noms s'il y a une virgule, un point-virgule, "feat" ou "&"
-            const listeNoms = item.artists.split(/,|;| feat\. | & /);
-
-            listeNoms.forEach(nom => {
-                //enlève les espaces inutiles autour du nom avant de l'ajouter
-                sacArtistes.add(nom.trim());
-            });
+            item.artists.split(/,|;| feat\. | & /).forEach(nom => sacArtistes.add(nom.trim()));
         }
     });
     document.getElementById('total-artists').innerText = sacArtistes.size.toLocaleString();
-    // 3. Top Région 
-    const regions = data.map(item => item.region);
-    document.getElementById('top-region').innerText = trouverPlusFrequent(regions);
-    // 4. Durée Moyenne 
-    let totalSecondes = 0;
-    
+    const regions = data.map(item => item.region).filter(r => r);
+    const counts = {};
+    regions.forEach(r => counts[r] = (counts[r] || 0) + 1);
+    document.getElementById('top-region').innerText = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
+    let totalSec = 0;
     data.forEach(item => {
         if (item.duration_fmt && item.duration_fmt.includes(':')) {
-            const parts = item.duration_fmt.split(':'); 
-            const minutes = parseInt(parts[0]);
-            const secondes = parseInt(parts[1]);
-            totalSecondes += (minutes * 60) + secondes;
+            const parts = item.duration_fmt.split(':');
+            totalSec += (parseInt(parts[0]) * 60) + parseInt(parts[1]);
         }
     });
-
-    const moyenneSecondes = totalSecondes / data.length;
-    const minFinal = Math.floor(moyenneSecondes / 60);
-    const secFinal = Math.round(moyenneSecondes % 60);
-    
-    const tempsFormate = `${minFinal}:${secFinal.toString().padStart(2, '0')}`;
-    document.getElementById('avg-duration').innerText = tempsFormate;
+    const moy = totalSec / data.length;
+    document.getElementById('avg-duration').innerText = `${Math.floor(moy/60)}:${Math.round(moy%60).toString().padStart(2,'0')}`;
 }
-// --- PARTIE GRAPHIQUE (Années 2000-2023) ---
-function afficherGraphique(data) {
-   
-    let listeAnnees = [];
-    let listeMoyennes = [];    // ÉTAPE 2 : On fait une boucle de 2000 jusqu'à 2023
-    for (let annee = 2000; annee <= 2023; annee++) {
-        
-        let chansonsDeLAnnee = data.filter(item => parseInt(item.year) === annee); 
 
-        if (chansonsDeLAnnee.length === 0) {
-       
-            listeMoyennes.push(0);
-        } else {
-           
-            let total = 0;
-            for (let i = 0; i < chansonsDeLAnnee.length; i++) {
-                total += chansonsDeLAnnee[i].popularity;
+// --- COURSE DYNAMIQUE (1980-2022) ---
+async function initInteractiveGenreRace(data) {
+    const slider = document.getElementById('yearRange');
+    const yearText = document.getElementById('yearValue');
+    const yearBg = document.getElementById('current-year-bg');
+    const playBtn = document.getElementById('playBtn');
+    
+    let isPlaying = false;
+    let playInterval;
+
+    const statsByYear = {};
+    for (let yr = 1980; yr <= 2022; yr++) {
+        const yearHits = data.filter(d => parseInt(d.year) === yr);
+        const genreSums = {};
+        const genreCounts = {};
+
+        yearHits.forEach(d => {
+            if (d.track_genre) {
+                genreSums[d.track_genre] = (genreSums[d.track_genre] || 0) + (d.popularity || 0);
+                genreCounts[d.track_genre] = (genreCounts[d.track_genre] || 0) + 1;
             }
-            
-            let moyenne = total / chansonsDeLAnnee.length;
-            
-            // On ajoute le résultat dans notre liste 
-            listeMoyennes.push(moyenne.toFixed(2));
-        }
+        });
 
-        // On ajoute l'année dans la liste des années
-        listeAnnees.push(annee);
+        statsByYear[yr] = Object.keys(genreSums)
+            .map(genre => ({
+                x: genre,
+                y: parseFloat((genreSums[genre] / genreCounts[genre]).toFixed(1))
+            }))
+            .sort((a, b) => b.y - a.y) 
+            .slice(0, 10);
     }
 
-   
-    var options = {
-        series: [{
-            name: 'Popularité Moyenne',
-            data: listeMoyennes // liste des moyennes calculées
-        }],
-        chart: {
-            type: 'area',      
-            height: 350,
-            background: 'transparent', 
-            toolbar: { show: false }   // Cache le menu de zoom
-        },
-        colors: ['#1db954'],   // 
-        stroke: { curve: 'smooth' }, // Ligne arrondie 
-        xaxis: {
-            categories: listeAnnees, // Liste des années
-            labels: { style: { colors: '#888' } } 
-        },
-        yaxis: {
-            labels: { style: { colors: '#888' } } 
-        },
-        grid: {
-            borderColor: '#333' 
-        },
-        theme: { mode: 'dark' } 
+    const options = {
+        series: [{ name: 'Popularité Moyenne', data: statsByYear[1980] }],
+        chart: { type: 'bar', height: 400, animations: { enabled: true, speed: 600 }, toolbar: { show: false } },
+        plotOptions: { bar: { horizontal: true, distributed: true, borderRadius: 6 } },
+        colors: ['#1db954', '#1ed760', '#1aa34a', '#21d366', '#12b8ff', '#535353', '#b3b3b3'],
+        xaxis: { max: 100, labels: { style: { colors: '#888' } } },
+        yaxis: { labels: { style: { colors: '#fff', fontSize: '13px' }, width: 140 } },
+        legend: { show: false },
+        theme: { mode: 'dark' }
     };
 
+    const raceChart = new ApexCharts(document.querySelector("#genre-race-chart"), options);
+    await raceChart.render();
 
-    document.querySelector("#main-chart").innerHTML = "";
-    
-    var chart = new ApexCharts(document.querySelector("#main-chart"), options);
-    chart.render();
+    const updateYear = (yr) => {
+        const newData = statsByYear[yr] || [];
+        yearText.innerText = yr;
+        yearBg.innerText = yr;
+        raceChart.updateSeries([{ data: newData }]);
+    };
+
+    slider.addEventListener('input', (e) => {
+        if(isPlaying) stopAutoPlay();
+        updateYear(e.target.value);
+    });
+
+    const stopAutoPlay = () => { clearInterval(playInterval); isPlaying = false; playBtn.innerText = "▶"; };
+
+    playBtn.addEventListener('click', () => {
+        if (isPlaying) stopAutoPlay();
+        else {
+            isPlaying = true; playBtn.innerText = "⏸";
+            playInterval = setInterval(() => {
+                let nxt = parseInt(slider.value) + 1;
+                if (nxt > 2022) { stopAutoPlay(); return; }
+                slider.value = nxt; updateYear(nxt);
+            }, 1200);
+        }
+    });
 }
 
-// Fonction utilitaire
-function trouverPlusFrequent(liste) {
+function afficherDuelADN(data) {
+    const getAvg = (arr, key, factor = 100) => 
+        (arr.reduce((a, b) => a + (b[key] || 0), 0) / (arr.length || 1) * factor);
+
+    const debut80s = data.filter(d => parseInt(d.year) === 1980);
+    const actuel2022 = data.filter(d => parseInt(d.year) === 2022);
+    const metrics = ['danceability', 'energy', 'popularity'];
     
-    // Si la liste est vide, on renvoie un tiret
-    if (liste.length === 0) return "-";
-
-    // 1. On prépare nos outils
-    let compteur = {};      
-    let final = liste[0]; 
-    let record = 1;         
-
-
-    for (const element of liste) {
-        
-        if (compteur[element]) {
-            compteur[element]++; // On ajoute +1 s'il existe déjà
-        } else {
-            compteur[element] = 1; // On l'initialise à 1 si c'est la première fois
-        }
-
-        if (compteur[element] > record) {
-            final = element;          
-            record = compteur[element]; 
-        }
-    }
-
-    return final;
+    new ApexCharts(document.querySelector("#comparison-bar-chart"), {
+        series: [
+            { name: 'Année 1980', data: metrics.map(m => getAvg(debut80s, m, m === 'popularity' ? 1 : 100).toFixed(1)) },
+            { name: 'Année 2022', data: metrics.map(m => getAvg(actuel2022, m, m === 'popularity' ? 1 : 100).toFixed(1)) }
+        ],
+        chart: { type: 'bar', height: 350, toolbar: { show: false } },
+        colors: ['#444', '#1db954'],
+        plotOptions: { bar: { columnWidth: '45%', borderRadius: 4 } },
+        xaxis: { categories: ['Dansabilité', 'Énergie', 'Popularité'], labels: { style: { colors: '#888' } } },
+        yaxis: { max: 100, labels: { style: { colors: '#888' } } },
+        theme: { mode: 'dark' },
+        legend: { position: 'top' }
+    }).render();
 }

@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             top50.forEach((track, index) => {
-                // Gestion de l'image (clé 'image' de ton dataset)
+                // Gestion de l'image 
                 const coverUrl = track.image && track.image.trim() !== "" 
                                 ? track.image 
                                 : `https://via.placeholder.com/300/121212/1db954?text=${encodeURIComponent(track.track_genre || 'Music')}`;
